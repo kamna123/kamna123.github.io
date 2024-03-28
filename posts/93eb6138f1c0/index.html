@@ -1,0 +1,305 @@
+<!DOCTYPE html><html lang="en" ><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f7f7"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1b1b1e"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="viewport" content="width=device-width, user-scalable=no initial-scale=1, shrink-to-fit=no, viewport-fit=cover" ><meta name="generator" content="Jekyll v4.3.2" /><meta property="og:title" content="Protocol Buffers (ProtoBuf) in Go" /><meta name="author" content="Kamna Garg" /><meta property="og:locale" content="en" /><meta name="description" content="Buckle up, folks! This time we’re diving into the world of Protocol Buffers (protobuf) and their superpowers in data serialization." /><meta property="og:description" content="Buckle up, folks! This time we’re diving into the world of Protocol Buffers (protobuf) and their superpowers in data serialization." /><link rel="canonical" href="/posts/93eb6138f1c0/" /><meta property="og:url" content="/posts/93eb6138f1c0/" /><meta property="og:site_name" content="Kamna" /><meta property="og:image" content="/assets/93eb6138f1c0/1*8zKcgF12hhQo-HveIj-JPA.png" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2023-05-20T18:12:39+00:00" /><meta name="twitter:card" content="summary_large_image" /><meta property="twitter:image" content="/assets/93eb6138f1c0/1*8zKcgF12hhQo-HveIj-JPA.png" /><meta property="twitter:title" content="Protocol Buffers (ProtoBuf) in Go" /><meta name="twitter:site" content="@kamna90" /><meta name="twitter:creator" content="@Kamna Garg" /> <script type="application/ld+json"> {"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Kamna Garg"},"dateModified":"2023-05-20T18:12:39+00:00","datePublished":"2023-05-20T18:12:39+00:00","description":"Buckle up, folks! This time we’re diving into the world of Protocol Buffers (protobuf) and their superpowers in data serialization.","headline":"Protocol Buffers (ProtoBuf) in Go","image":"/assets/93eb6138f1c0/1*8zKcgF12hhQo-HveIj-JPA.png","mainEntityOfPage":{"@type":"WebPage","@id":"/posts/93eb6138f1c0/"},"url":"/posts/93eb6138f1c0/"}</script><title>Protocol Buffers (ProtoBuf) in Go | Kamna</title><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="shortcut icon" href="/assets/img/favicons/favicon.ico"><meta name="apple-mobile-web-app-title" content="Kamna"><meta name="application-name" content="Kamna"><meta name="msapplication-TileColor" content="#da532c"><meta name="msapplication-config" content="/assets/img/favicons/browserconfig.xml"><meta name="theme-color" content="#ffffff"><link rel="preconnect" href="https://fonts.googleapis.com" ><link rel="dns-prefetch" href="https://fonts.googleapis.com" ><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="dns-prefetch" href="https://fonts.gstatic.com" crossorigin><link rel="preconnect" href="https://fonts.googleapis.com" ><link rel="dns-prefetch" href="https://fonts.googleapis.com" ><link rel="preconnect" href="https://cdn.jsdelivr.net" ><link rel="dns-prefetch" href="https://cdn.jsdelivr.net" ><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato&family=Source+Sans+Pro:wght@400;600;700;900&display=swap"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css"><link rel="stylesheet" href="/assets/css/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tocbot@4.20.1/dist/tocbot.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/magnific-popup@1/dist/magnific-popup.min.css"> <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script> <script type="text/javascript"> class ModeToggle { static get MODE_KEY() { return "mode"; } static get MODE_ATTR() { return "data-mode"; } static get DARK_MODE() { return "dark"; } static get LIGHT_MODE() { return "light"; } static get ID() { return "mode-toggle"; } constructor() { if (this.hasMode) { if (this.isDarkMode) { if (!this.isSysDarkPrefer) { this.setDark(); } } else { if (this.isSysDarkPrefer) { this.setLight(); } } } let self = this; /* always follow the system prefers */ this.sysDarkPrefers.addEventListener('change', () => { if (self.hasMode) { if (self.isDarkMode) { if (!self.isSysDarkPrefer) { self.setDark(); } } else { if (self.isSysDarkPrefer) { self.setLight(); } } self.clearMode(); } self.notify(); }); } /* constructor() */ get sysDarkPrefers() { return window.matchMedia("(prefers-color-scheme: dark)"); } get isSysDarkPrefer() { return this.sysDarkPrefers.matches; } get isDarkMode() { return this.mode === ModeToggle.DARK_MODE; } get isLightMode() { return this.mode === ModeToggle.LIGHT_MODE; } get hasMode() { return this.mode != null; } get mode() { return sessionStorage.getItem(ModeToggle.MODE_KEY); } /* get the current mode on screen */ get modeStatus() { if (this.isDarkMode || (!this.hasMode && this.isSysDarkPrefer)) { return ModeToggle.DARK_MODE; } else { return ModeToggle.LIGHT_MODE; } } setDark() { $('html').attr(ModeToggle.MODE_ATTR, ModeToggle.DARK_MODE); sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE); } setLight() { $('html').attr(ModeToggle.MODE_ATTR, ModeToggle.LIGHT_MODE); sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE); } clearMode() { $('html').removeAttr(ModeToggle.MODE_ATTR); sessionStorage.removeItem(ModeToggle.MODE_KEY); } /* Notify another plugins that the theme mode has changed */ notify() { window.postMessage({ direction: ModeToggle.ID, message: this.modeStatus }, "*"); } flipMode() { if (this.hasMode) { if (this.isSysDarkPrefer) { if (this.isLightMode) { this.clearMode(); } else { this.setLight(); } } else { if (this.isDarkMode) { this.clearMode(); } else { this.setDark(); } } } else { if (this.isSysDarkPrefer) { this.setLight(); } else { this.setDark(); } } this.notify(); } /* flipMode() */ } /* ModeToggle */ const modeToggle = new ModeToggle(); </script><body data-topbar-visible="true"><div id="sidebar" class="d-flex flex-column align-items-end"><div class="profile-wrapper text-center"><div id="avatar"> <a href="/" class="mx-auto"> <img src="/assets/img/favicons/1621252237275.jpeg" alt="avatar" onerror="this.style.display='none'"> </a></div><div class="site-title"> <a href="/">Kamna</a></div><div class="site-subtitle font-italic">Womanwhocode</div></div><ul class="w-100"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home ml-xl-3 mr-xl-3 unloaded"></i> <span>HOME</span> </a><li class="nav-item"> <a href="/categories/" class="nav-link"> <i class="fa-fw fas fa-stream ml-xl-3 mr-xl-3 unloaded"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/tags/" class="nav-link"> <i class="fa-fw fas fa-tag ml-xl-3 mr-xl-3 unloaded"></i> <span>TAGS</span> </a><li class="nav-item"> <a href="/archives/" class="nav-link"> <i class="fa-fw fas fa-archive ml-xl-3 mr-xl-3 unloaded"></i> <span>ARCHIVES</span> </a><li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info-circle ml-xl-3 mr-xl-3 unloaded"></i> <span>ABOUT</span> </a></ul><div class="sidebar-bottom mt-auto d-flex flex-wrap justify-content-center align-items-center"> <button class="mode-toggle btn" aria-label="Switch Mode"> <i class="fas fa-adjust"></i> </button> <span class="icon-border"></span> <a href="javascript:location.href = 'mailto:' + ['kamna90123','gmail.com'].join('@')" aria-label="email" > <i class="fas fa-envelope"></i> </a> <a href="/feed.xml" aria-label="rss" > <i class="fas fa-rss"></i> </a></div></div><div id="topbar-wrapper"><div id="topbar" class="container d-flex align-items-center justify-content-between h-100 pl-3 pr-3 pl-md-4 pr-md-4"> <span id="breadcrumb"> <span> <a href="/"> Home </a> </span> <span>Protocol Buffers (ProtoBuf) in Go</span> </span> <i id="sidebar-trigger" class="fas fa-bars fa-fw"></i><div id="topbar-title"> Post</div><i id="search-trigger" class="fas fa-search fa-fw"></i> <span id="search-wrapper" class="align-items-center"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="Search..."> </span> <span id="search-cancel" >Cancel</span></div></div><div id="main-wrapper" class="d-flex justify-content-center"><div id="main" class="container pl-xl-4 pr-xl-4"><div class="row"><div id="core-wrapper" class="col-12 col-lg-11 col-xl-9 pr-xl-4"><div class="post pl-1 pr-1 pl-md-2 pr-md-2"><h1 data-toc-skip>Protocol Buffers (ProtoBuf) in Go</h1><div class="post-meta text-muted"> <span> Posted <em class="" data-ts="1684606359" data-df="ll" data-toggle="tooltip" data-placement="bottom"> May 20, 2023 </em> </span> <span> Updated <em class="" data-ts="1684606359" data-df="ll" data-toggle="tooltip" data-placement="bottom"> May 20, 2023 </em> </span><div class="mt-3 mb-3"> <a href="/assets/93eb6138f1c0/1*8zKcgF12hhQo-HveIj-JPA.png" class="popup img-link preview-img shimmer"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 630'%3E%3C/svg%3E" data-src="/assets/93eb6138f1c0/1*8zKcgF12hhQo-HveIj-JPA.png" alt="Preview Image" width="1200" height="630" class="lazyload" data-proofer-ignore></a></div><div class="d-flex justify-content-between"> <span> By <em> <a href=""></a> </em> </span><div> <span class="readtime" data-toggle="tooltip" data-placement="bottom" title="1208 words"> <em>6 min</em> read</span></div></div></div><div class="post-content"><h3 id="protocol-buffers-protobuf-in-go"><span class="mr-2">Protocol Buffers (ProtoBuf) in Go</span><a href="#protocol-buffers-protobuf-in-go" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>Buckle up, folks! This time we’re diving into the world of Protocol Buffers (protobuf) and their superpowers in data serialization.</p><h3 id="introduction"><span class="mr-2">Introduction</span><a href="#introduction" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>Protocol Buffers, also referred to as protobuf, is a language-agnostic binary serialization format that has been developed by Google. Its primary purpose is to efficiently serialize structured data for inter-system communication and data storage.</p><p><a href="/assets/93eb6138f1c0/1*8zKcgF12hhQo-HveIj-JPA.png" class="popup img-link "><img data-src="/assets/93eb6138f1c0/1*8zKcgF12hhQo-HveIj-JPA.png" alt="[Image source: Google]" class="lazyload" data-proofer-ignore></a></p><p>[Image source: Google]</p><h4 id="major-benefits-of-protobuf-"><span class="mr-2">Major benefits of protobuf :</span><a href="#major-benefits-of-protobuf-" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h4><ol><li><strong>Compactness</strong> : Protobuf provides efficient serialization, resulting in smaller message sizes for improved bandwidth usage.<li><strong>Schema Evolution</strong> : Protobuf supports schema evolution without breaking compatibility, allowing seamless updates to data structures.<li><strong>Efficient Serialization and Deserialization</strong> : Protobuf offers fast and efficient serialization, improving overall system performance.<li><strong>Cross-Platform Support</strong> : Protobuf allows seamless data exchange across different platforms and languages.</ol><p>These benefits make protobuf a powerful tool for efficient data communication and storage in Go applications.</p><h3 id="how-it-is-better-than-json-and-xml"><span class="mr-2">How It Is Better Than JSON and XML:</span><a href="#how-it-is-better-than-json-and-xml" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p><a href="/assets/93eb6138f1c0/1*SHvthGpuW9CysvRvS_dk2g.png" class="popup img-link "><img data-src="/assets/93eb6138f1c0/1*SHvthGpuW9CysvRvS_dk2g.png" alt="[Image source: Google]" class="lazyload" data-proofer-ignore></a></p><p>[Image source: Google]</p><p>XML, known as Extensible Markup Language, is like a map that helps organize and structure data using tags. It presents information in a way that both humans and machines can understand. However, XML can be wordy and take up more space, which may slow down performance and make data transmission less efficient.</p><p>JSON, or JavaScript Object Notation, is like a messenger that uses a simple key-value structure to represent data objects. It has become popular for transmitting data between web services because it is easy to read and work with. But JSON’s text-based format can result in larger file sizes, which can affect the speed of data transfer.</p><p>In contrast, Protocol Buffers (protobuf) shine in the world of data serialization. It’s like a magic trick that transforms data into a compact and efficient binary format. Protobuf is known for its fast data processing and the ability to adapt to changing data structures without breaking compatibility. It can be used with different programming languages and ensures the reliability of your data.</p><p>In summary, XML and JSON have their uses, but if you need a powerful and efficient data serialization solution, Protocol Buffer (protobuf) is the way to go. It provides compactness, speed, flexibility, and compatibility, making it a top choice for handling data efficiently.</p><h3 id="the-serialization-performance-protocol-buffers-vs-json-in-golang"><span class="mr-2">The Serialization Performance: Protocol Buffers vs. JSON in Golang</span><a href="#the-serialization-performance-protocol-buffers-vs-json-in-golang" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><blockquote><p>Enough Talk, Let’s Get Our Hands Dirty</p></blockquote><p><a href="/assets/93eb6138f1c0/1*qtLLXKOJJjKKNbLcTEzWpg.gif" class="popup img-link "><img data-src="/assets/93eb6138f1c0/1*qtLLXKOJJjKKNbLcTEzWpg.gif" alt="[Image source: Google]" class="lazyload" data-proofer-ignore></a></p><p>[Image source: Google]</p><ol><li>Visit the official Protocol Buffers GitHub repository ( <a href="https://github.com/protocolbuffers/protobuf" target="_blank">https://github.com/protocolbuffers/protobuf</a> ) to download the compiler compatible with your operating system.</ol><p>2. Define a protobuf message schema using the .proto file format. ```protocol buffer syntax = “proto3”; package main; option go_package = “/;msgmodel”;</p><p>message MyMessage { int32 id = 1; string name = 2; string email = 3; }</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+</pre><td class="rouge-code"><pre>
+3\. Compile the file
+
+
+&gt; protoc — go\_out=\. \./\*proto 
+
+
+
+
+
+This command generates Go code bindings from the protobuf schema\. The `--go_out` flag specifies that the output should be in Go\. This will generate a msg\.pb\.go file, that contains the necessary code bindings for your protobuf schema\.
+
+4\. Implement a benchmark test in Golang that serializes a large dataset using both protobuf and JSON:
+```go
+package main
+
+import (
+	"encoding/json"
+	"github.com/golang/protobuf/proto"
+	"go-protobuf/model/message"
+	"log"
+	"testing"
+)
+
+const (
+	iteration = 10000000 //Number of iterations for the benchmark test
+)
+
+func generateDataset() []*message.MyMessage {
+	var dataset []*message.MyMessage
+
+	for i := 0; i &lt; iteration; i++ {
+		data := &amp;message.MyMessage{
+			Email: "johndoe@example.com",
+			Name:  "John Doe",
+			Id:    int32(i),
+		}
+		dataset = append(dataset, data)
+	}
+
+	return dataset
+}
+
+func BenchmarkProtobufSerialisation(b *testing.B) {
+	dataset := generateDataset()
+
+	b.ResetTimer()
+	for n := 0; n &lt; b.N; n++ {
+		for _, data := range dataset {
+			_, err := proto.Marshal(data)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+	}
+}
+
+func BenchmarkJSONSerialization(b *testing.B) {
+	dataset := generateDataset()
+
+	b.ResetTimer()
+	for n := 0; n &lt; b.N; n++ {
+		for _, data := range dataset {
+			_, err := json.Marshal(data)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+	}
+}
+func main() {
+	// Run the benchmark tests
+	testing.Benchmark(BenchmarkProtobufSerialisation)
+	testing.Benchmark(BenchmarkJSONSerialization)
+}
+</pre></table></code></div></div><p>5. Based on the benchmark results (shown below), it is evident that Protobuf outperforms JSON serialization in terms of speed. The protobuf serialization benchmark was completed in significantly less time compared to the JSON serialization benchmark.</p><p><a href="/assets/93eb6138f1c0/1*ymD_L5uzpN6OXvZSue9c0g.png" class="popup img-link "><img data-src="/assets/93eb6138f1c0/1*ymD_L5uzpN6OXvZSue9c0g.png" alt="" class="lazyload" data-proofer-ignore></a></p><h3 id="memory-performance-comparison-json-vs-protocol-buffers"><span class="mr-2">Memory Performance Comparison: JSON vs. Protocol Buffers</span><a href="#memory-performance-comparison-json-vs-protocol-buffers" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><ol><li>Implement a benchmark test in Golang that compares memory usage of a large dataset using both protobuf and JSON:</ol><div class="language-go highlighter-rouge"><div class="code-header"> <span data-label-text="Go"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+</pre><td class="rouge-code"><pre><span class="k">package</span> <span class="n">main</span>
+
+<span class="k">import</span> <span class="p">(</span>
+	<span class="s">"encoding/json"</span>
+	<span class="s">"github.com/golang/protobuf/proto"</span>
+	<span class="s">"go-protobuf/model/message"</span>
+	<span class="s">"log"</span>
+	<span class="s">"runtime"</span>
+	<span class="s">"runtime/debug"</span>
+	<span class="s">"testing"</span>
+<span class="p">)</span>
+
+<span class="k">const</span> <span class="p">(</span>
+	<span class="n">iteration</span> <span class="o">=</span> <span class="m">100000000</span> <span class="c">//Number of iterations for the benchmark test</span>
+<span class="p">)</span>
+
+<span class="k">func</span> <span class="n">generateDataset</span><span class="p">()</span> <span class="p">[]</span><span class="o">*</span><span class="n">message</span><span class="o">.</span><span class="n">MyMessage</span> <span class="p">{</span>
+	<span class="k">var</span> <span class="n">dataset</span> <span class="p">[]</span><span class="o">*</span><span class="n">message</span><span class="o">.</span><span class="n">MyMessage</span>
+
+	<span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">iteration</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="n">data</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">message</span><span class="o">.</span><span class="n">MyMessage</span><span class="p">{</span>
+			<span class="n">Email</span><span class="o">:</span> <span class="s">"johndoe@example.com"</span><span class="p">,</span>
+			<span class="n">Name</span><span class="o">:</span>  <span class="s">"John Doe"</span><span class="p">,</span>
+			<span class="n">Id</span><span class="o">:</span>    <span class="kt">int32</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
+		<span class="p">}</span>
+		<span class="n">dataset</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span> <span class="n">dataset</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">BenchmarkProtobufSerialisation</span><span class="p">(</span><span class="n">b</span> <span class="o">*</span><span class="n">testing</span><span class="o">.</span><span class="n">B</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">dataset</span> <span class="o">:=</span> <span class="n">generateDataset</span><span class="p">()</span>
+
+	<span class="n">b</span><span class="o">.</span><span class="n">ResetTimer</span><span class="p">()</span>
+	<span class="k">for</span> <span class="n">n</span> <span class="o">:=</span> <span class="m">0</span><span class="p">;</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">b</span><span class="o">.</span><span class="n">N</span><span class="p">;</span> <span class="n">n</span><span class="o">++</span> <span class="p">{</span>
+		<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">data</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">dataset</span> <span class="p">{</span>
+			<span class="n">_</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">proto</span><span class="o">.</span><span class="n">Marshal</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+				<span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="n">measureMemoryUsage</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">BenchmarkJSONSerialization</span><span class="p">(</span><span class="n">b</span> <span class="o">*</span><span class="n">testing</span><span class="o">.</span><span class="n">B</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">dataset</span> <span class="o">:=</span> <span class="n">generateDataset</span><span class="p">()</span>
+
+	<span class="n">b</span><span class="o">.</span><span class="n">ResetTimer</span><span class="p">()</span>
+	<span class="k">for</span> <span class="n">n</span> <span class="o">:=</span> <span class="m">0</span><span class="p">;</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">b</span><span class="o">.</span><span class="n">N</span><span class="p">;</span> <span class="n">n</span><span class="o">++</span> <span class="p">{</span>
+		<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">data</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">dataset</span> <span class="p">{</span>
+			<span class="n">_</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">json</span><span class="o">.</span><span class="n">Marshal</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+				<span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="n">measureMemoryUsage</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+
+<span class="p">}</span>
+<span class="k">func</span> <span class="n">measureMemoryUsage</span><span class="p">(</span><span class="n">b</span> <span class="o">*</span><span class="n">testing</span><span class="o">.</span><span class="n">B</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">debug</span><span class="o">.</span><span class="n">FreeOSMemory</span><span class="p">()</span>
+	<span class="k">var</span> <span class="n">mem</span> <span class="n">runtime</span><span class="o">.</span><span class="n">MemStats</span>
+	<span class="n">runtime</span><span class="o">.</span><span class="n">GC</span><span class="p">()</span>
+	<span class="n">runtime</span><span class="o">.</span><span class="n">ReadMemStats</span><span class="p">(</span><span class="o">&amp;</span><span class="n">mem</span><span class="p">)</span>
+	<span class="n">b</span><span class="o">.</span><span class="n">ReportMetric</span><span class="p">(</span><span class="kt">float64</span><span class="p">(</span><span class="n">mem</span><span class="o">.</span><span class="n">Alloc</span><span class="p">)</span><span class="o">/</span><span class="m">1024</span><span class="o">/</span><span class="m">1024</span><span class="p">,</span> <span class="s">"Memory_MB"</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c">// Run the benchmark tests</span>
+	<span class="n">testing</span><span class="o">.</span><span class="n">Benchmark</span><span class="p">(</span><span class="n">BenchmarkProtobufSerialisation</span><span class="p">)</span>
+	<span class="n">testing</span><span class="o">.</span><span class="n">Benchmark</span><span class="p">(</span><span class="n">BenchmarkJSONSerialization</span><span class="p">)</span>
+
+<span class="p">}</span>
+</pre></table></code></div></div><p>2. The benchmark results show that JSON serialization used more memory compared to Protobuf serialization. On average, JSON serialization consumed around 0.2052 MB of memory, while protobuf serialization used only about 0.2042 MB. Although the difference is small, it’s clear that protobuf is more efficient in terms of memory usage. This means that protobuf’s compact binary format helps save memory, making it a good choice for working with large datasets and improving performance.</p><p><a href="/assets/93eb6138f1c0/1*s3-fOSj_uX_OCbqFZxSKWQ.png" class="popup img-link "><img data-src="/assets/93eb6138f1c0/1*s3-fOSj_uX_OCbqFZxSKWQ.png" alt="" class="lazyload" data-proofer-ignore></a></p><h3 id="conclusion"><span class="mr-2">Conclusion</span><a href="#conclusion" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>It’s conclusion time now ! ! !</p><p>Protocol Buffers (protobuf) have demonstrated superior performance and memory efficiency compared to JSON serialization in Golang. With its compact binary format and efficient serialization mechanism, protobuf offers smaller message sizes, improved network efficiency, and reduced bandwidth usage. Additionally, its schema evolution capabilities allow for seamless updates to data models. While JSON has its strengths, protobuf excels in scenarios that demand high-speed and memory-efficient data serialization, enabling optimized data transmission and improved system performance.</p><p><a href="/assets/93eb6138f1c0/1*7MliC3JYB8bkfKkPmC0xwA.gif" class="popup img-link "><img data-src="/assets/93eb6138f1c0/1*7MliC3JYB8bkfKkPmC0xwA.gif" alt="[Image Source: Google]" class="lazyload" data-proofer-ignore></a></p><p>[Image Source: Google]</p><p>The complete codebase for the examples discussed in this article is available on the <a href="https://github.com/kamna123/go-protobuf" target="_blank">Git repository</a> .</p><p><em><a href="https://kamnagarg-10157.medium.com/protocol-buffers-protobuf-in-go-93eb6138f1c0" target="_blank">Post</a> converted from Medium by <a href="https://github.com/ZhgChgLi/ZMediumToMarkdown" target="_blank">ZMediumToMarkdown</a>.</em></p></div><div class="post-tail-wrapper text-muted"><div class="post-tags"> <i class="fa fa-tags fa-fw mr-1"></i> <a href="/tags/protobuf/" class="post-tag no-text-decoration" >protobuf</a> <a href="/tags/golang/" class="post-tag no-text-decoration" >golang</a> <a href="/tags/programming/" class="post-tag no-text-decoration" >programming</a> <a href="/tags/golang-tutorial/" class="post-tag no-text-decoration" >golang-tutorial</a></div><div class="post-tail-bottom d-flex justify-content-between align-items-center mt-3 pt-5 pb-2"><div class="license-wrapper"> This post is licensed under <a href="https://creativecommons.org/licenses/by/4.0/"> CC BY 4.0 </a> by the author.</div><div class="share-wrapper"> <span class="share-label text-muted mr-1">Share</span> <span class="share-icons"> <a href="https://twitter.com/intent/tweet?text=Protocol%20Buffers%20(ProtoBuf)%20in%20Go%20-%20Kamna&url=%2Fposts%2F93eb6138f1c0%2F" data-toggle="tooltip" data-placement="top" title="Twitter" target="_blank" rel="noopener" aria-label="Twitter"> <i class="fa-fw fab fa-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=Protocol%20Buffers%20(ProtoBuf)%20in%20Go%20-%20Kamna&u=%2Fposts%2F93eb6138f1c0%2F" data-toggle="tooltip" data-placement="top" title="Facebook" target="_blank" rel="noopener" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://www.linkedin.com/sharing/share-offsite/?url=%2Fposts%2F93eb6138f1c0%2F" data-toggle="tooltip" data-placement="top" title="Linkedin" target="_blank" rel="noopener" aria-label="Linkedin"> <i class="fa-fw fab fa-linkedin"></i> </a> <i id="copy-link" class="fa-fw fas fa-link small" data-toggle="tooltip" data-placement="top" title="Copy link" data-title-succeed="Link copied successfully!"> </i> </span></div></div></div></div></div><div id="panel-wrapper" class="col-xl-3 pl-2 text-muted"><div class="access"><div id="access-lastmod" class="post"><div class="panel-heading">Recently Updated</div><ul class="post-content pl-0 pb-1 ml-1 mt-2"><li><a href="/posts/ff56d35a891f/">Mastering Asynchronous Programming with Kotlin Coroutines — Part 1</a><li><a href="/posts/ed48312c0e80/">Think, Stick and just go</a><li><a href="/posts/34d9d3a5565b/">Exploring Context in Golang</a><li><a href="/posts/f01ac6e884dc/">Exploring the Internals of Channels in Go</a><li><a href="/posts/40902c487f04/">Demystifying Kubernetes: Part 1</a></ul></div><div id="access-tags"><div class="panel-heading">Trending Tags</div><div class="d-flex flex-wrap mt-3 mb-1 mr-3"> <a class="post-tag" href="/tags/golang/">golang</a> <a class="post-tag" href="/tags/backend-development/">backend-development</a> <a class="post-tag" href="/tags/backend/">backend</a> <a class="post-tag" href="/tags/algorithms/">algorithms</a> <a class="post-tag" href="/tags/boyer-moore/">boyer-moore</a> <a class="post-tag" href="/tags/concurrency/">concurrency</a> <a class="post-tag" href="/tags/database/">database</a> <a class="post-tag" href="/tags/deadlock/">deadlock</a> <a class="post-tag" href="/tags/defer/">defer</a> <a class="post-tag" href="/tags/design-patterns/">design-patterns</a></div></div></div><div id="toc-wrapper" class="pl-0 pr-4 mb-5"><div class="panel-heading pl-3 pt-2 mb-2">Contents</div><nav id="toc"></nav></div><script src="https://cdn.jsdelivr.net/npm/tocbot@4.20.1/dist/tocbot.min.js"></script></div></div><div class="row"><div id="tail-wrapper" class="col-12 col-lg-11 col-xl-9 pl-3 pr-3 pr-xl-4 mt-5"><div id="related-posts" class="mb-2 mb-sm-4"><h3 class="pt-2 mb-4 ml-1" data-toc-skip>Further Reading</h3><div class="card-deck mb-4"><div class="card"> <a href="/posts/678dd07129a2/"><div class="card-body"> <em class="small" data-ts="1684256201" data-df="ll" > May 16, 2023 </em><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Demystifying Load Balancing in Go: A Comprehensive Guide</h3><div class="text-muted small"><p> Demystifying Load Balancing in Go: A Comprehensive Guide Load balancing is a crucial technique used to distribute incoming traffic across multiple backend servers, ensuring optimal performance, sc...</p></div></div></a></div><div class="card"> <a href="/posts/fe2d7a895ab3/"><div class="card-body"> <em class="small" data-ts="1684347531" data-df="ll" > May 17, 2023 </em><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Exploring Design Patterns in Go</h3><div class="text-muted small"><p> Exploring Design Patterns in Go Design patterns are reusable solutions to common software design problems that help developers build software that is maintainable, extensible, and scalable. In thi...</p></div></div></a></div><div class="card"> <a href="/posts/5f41199085b9/"><div class="card-body"> <em class="small" data-ts="1688758072" data-df="ll" > Jul 7, 2023 </em><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Understanding Mutex in Go</h3><div class="text-muted small"><p> Understanding Mutex in Go Image source: google Introduction In concurrent programming, ensuring data integrity and preventing race conditions is crucial. In Go, the sync.Mutex type provides a s...</p></div></div></a></div></div></div><div class="post-navigation d-flex justify-content-between"> <a href="/posts/fe2d7a895ab3/" class="btn btn-outline-primary" prompt="Older"><p>Exploring Design Patterns in Go</p></a> <a href="/posts/f01ac6e884dc/" class="btn btn-outline-primary" prompt="Newer"><p>Exploring the Internals of Channels in Go</p></a></div></div></div></div><div id="search-result-wrapper" class="d-flex justify-content-center unloaded"><div class="col-12 col-sm-11 post-content"><div id="search-hints"><div id="access-tags"><div class="panel-heading">Trending Tags</div><div class="d-flex flex-wrap mt-3 mb-1 mr-3"> <a class="post-tag" href="/tags/golang/">golang</a> <a class="post-tag" href="/tags/backend-development/">backend-development</a> <a class="post-tag" href="/tags/backend/">backend</a> <a class="post-tag" href="/tags/algorithms/">algorithms</a> <a class="post-tag" href="/tags/boyer-moore/">boyer-moore</a> <a class="post-tag" href="/tags/concurrency/">concurrency</a> <a class="post-tag" href="/tags/database/">database</a> <a class="post-tag" href="/tags/deadlock/">deadlock</a> <a class="post-tag" href="/tags/defer/">defer</a> <a class="post-tag" href="/tags/design-patterns/">design-patterns</a></div></div></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><footer><div class="container pl-lg-4 pr-lg-4"><div class="d-flex justify-content-between align-items-center text-muted ml-md-3 mr-md-3"><div class="footer-left"><p class="mb-0"> © 2024 <a href="https://twitter.com/kamna90">kamna</a>. <span data-toggle="tooltip" data-placement="top" title="Except where otherwise noted, the blog posts on this site are licensed under the Creative Commons Attribution 4.0 International (CC BY 4.0) License by the author.">All rights reserved.</span></p></div><div class="footer-right"><p class="mb-0">Using the <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> theme <a href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener">Chirpy</a>.</p></div></div></div></footer><div id="mask"></div><a id="back-to-top" href="#" aria-label="back-to-top" class="btn btn-lg btn-box-shadow" role="button"> <i class="fas fa-angle-up"></i> </a><div id="notification" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-animation="true" data-autohide="false"><div class="toast-header"> <button type="button" class="ml-2 ml-auto close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button></div><div class="toast-body text-center pt-0"><p class="pl-2 pr-2 mb-3">A new version of content is available.</p><button type="button" class="btn btn-primary" aria-label="Update"> Update </button></div></div><script src="https://cdn.jsdelivr.net/npm/simple-jekyll-search@1.10.0/dest/simple-jekyll-search.min.js"></script> <script> SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<div class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-lg-4 pr-lg-4 pl-xl-0 pr-xl-0"> <a href="{url}">{title}</a><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div><p>{snippet}</p></div>', noResultsText: '<p class="mt-5">Oops! No result founds.</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="mr-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); </script> <script src="https://cdn.jsdelivr.net/combine/npm/magnific-popup@1/dist/jquery.magnific-popup.min.js,npm/lazysizes@5.3.2/lazysizes.min.js,npm/clipboard@2/dist/clipboard.min.js"></script> <script src="https://cdn.jsdelivr.net/combine/npm/dayjs@1/dayjs.min.js,npm/dayjs@1/locale/en.min.js,npm/dayjs@1/plugin/relativeTime.min.js,npm/dayjs@1/plugin/localizedFormat.min.js"></script> <script defer src="/assets/js/dist/post.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.bundle.min.js"></script> <script defer src="/app.js"></script>
